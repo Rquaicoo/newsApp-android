@@ -1,5 +1,5 @@
 # newsApp-Android
-Android version of [newsApp-ios](https://github.com/Reu-Amissah/newsApp-iOS) with Compose
+Android version of [newsApp-iOS](https://github.com/Reu-Amissah/newsApp-iOS) with Compose
 
 ## Features
 - [ ] Landing Page
