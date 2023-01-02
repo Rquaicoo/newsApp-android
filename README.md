@@ -2,7 +2,7 @@
 Android version of [newsApp-iOS](https://github.com/Reu-Amissah/newsApp-iOS) with Compose
 
 ## Features
-- [ ] Landing Page
+- [x] Landing Page
 - [ ] Login Page
 - [ ] Register/ Sign In page
 - [ ] User Authentication with Firebase, LogIn
