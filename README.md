@@ -3,13 +3,17 @@ Android version of [newsApp-iOS](https://github.com/Reu-Amissah/newsApp-iOS) wit
 
 ## Features
 - [x] Landing Page
-- [ ] Login Page
-- [ ] Register/ Sign In page
+- [x] Login Page
+- [x] Register/ Sign In page
+- [ ] Home Page/ Trending
+- [ ] Application Icon
 - [ ] User Authentication with Firebase, LogIn
 - [ ] User Authentication with Firebase, Register
 - [ ] Navigate to Homepage after Login
 - [ ] Navigate to Homepage after Register
-- [ ] Home Page/ Trending
+- [ ] Fetch news from API
+- [ ] Notification functionality
+
 
 ## Figma
 Link to the [Figma Design](https://www.figma.com/file/NC3QGx7uyMbJMvhzhRgGys/News-iOS-app?node-id=0%3A1) created by [Ekow Amissah](https://github.com/Reu-Amissah)
