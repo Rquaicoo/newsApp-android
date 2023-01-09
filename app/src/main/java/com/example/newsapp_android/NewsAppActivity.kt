@@ -27,7 +27,7 @@ fun NewsApp(modifier: Modifier) {
 
         NavHost(navController, Onboarding.route, modifier) {
             composable(Onboarding.route) {
-                Onboarding.screen()
+                OnboardingComponent(OnRegisterClick = { navController.navigate("register") }, OnLoginClick = { navController.navigate("login") })
             }
             composable(Login.route) {
                 Login.screen()

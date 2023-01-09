@@ -16,12 +16,12 @@ object Onboarding : NewsAppDestination {
 
 object Register : NewsAppDestination {
     override val route = "register"
-    override val screen : @Composable () -> Unit = { Login() }
+    override val screen : @Composable () -> Unit = { Register() }
 }
 
 object Login : NewsAppDestination {
     override val route = "login"
-    override val screen : @Composable () -> Unit = { Register() }
+    override val screen : @Composable () -> Unit = { Login() }
 }
 
 object Home : NewsAppDestination {
@@ -29,3 +29,4 @@ object Home : NewsAppDestination {
     /*TODO: To be modified*/
     override val screen : @Composable () -> Unit = { OnboardingComponent() }
 }
+

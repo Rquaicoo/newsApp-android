@@ -4,6 +4,7 @@ package com.example.newsapp_android
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.runtime.Composable
@@ -21,7 +22,7 @@ import androidx.compose.ui.unit.sp
 import com.example.newsapp_android.ui.theme.NewsAppandroidTheme
 
 @Composable
-fun OnboardingComponent(modifier: Modifier = Modifier) {
+fun OnboardingComponent(modifier: Modifier = Modifier, OnRegisterClick : () -> Unit = {}, OnLoginClick : () -> Unit = {}) {
     Surface(modifier = modifier) {
         Column(
             modifier = Modifier
@@ -68,11 +69,14 @@ fun OnboardingComponent(modifier: Modifier = Modifier) {
                 .height(70.dp)
                 .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        OnRegisterClick()
+                    },
                     modifier = Modifier
                         .height(58.dp)
                         .width(168.dp)
                         .padding(vertical = 2.dp, horizontal = 12.dp),
+                    shape = RoundedCornerShape(10.dp),
                     colors = buttonColors(Color(0xF6, 0x76, 0x00))
                 ) {
                     Text(
@@ -83,11 +87,14 @@ fun OnboardingComponent(modifier: Modifier = Modifier) {
                 }
 
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                              OnLoginClick()
+                    },
                     modifier = Modifier
                         .height(58.dp)
                         .width(168.dp)
                         .padding(vertical = 2.dp, horizontal = 12.dp),
+                    shape = RoundedCornerShape(10.dp),
                     colors = buttonColors(Color.White)
                 ) {
                     Text(
