@@ -9,6 +9,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.newsapp_android.ui.theme.NewsAppandroidTheme
+import com.example.newsapp_android.ui.authentication.Login
+import com.example.newsapp_android.ui.authentication.Register
+import com.example.newsapp_android.ui.main.Home
 
 class NewsAppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,13 +33,13 @@ fun NewsApp(modifier: Modifier) {
                 OnboardingComponent(OnRegisterClick = { navController.navigate("register") }, OnLoginClick = { navController.navigate("login") })
             }
             composable(Login.route) {
-                Login.screen()
+                Login( Login = { navController.navigate(("home"))} )
             }
             composable(Register.route) {
-                Register.screen()
+                Register( Register = { navController.navigate(("home"))} )
             }
             composable(Home.route) {
-                Home.screen()
+                Home()
             }
         }
 

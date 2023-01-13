@@ -32,7 +32,7 @@ import com.example.newsapp_android.ui.theme.NewsAppandroidTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Login(modifier: Modifier = Modifier) {
+fun Login(modifier: Modifier = Modifier, Login : () -> Unit = {}) {
     var text by remember { mutableStateOf("") }
     var rememberMeChecked by remember { mutableStateOf(true) }
 
@@ -146,7 +146,7 @@ fun Login(modifier: Modifier = Modifier) {
                 Spacer(modifier = Modifier.height(30.dp))
                 
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { Login() },
                     modifier = Modifier
                         .padding(vertical = 2.dp, horizontal = 2.dp)
                         .fillMaxWidth()

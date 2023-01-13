@@ -33,7 +33,7 @@ import com.example.newsapp_android.ui.theme.NewsAppandroidTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Register(modifier: Modifier = Modifier) {
+fun Register(modifier: Modifier = Modifier, Register: () -> Unit = {}) {
     var text by remember { mutableStateOf("") }
 
     Surface(modifier = modifier.background(color = Color.White)) {
@@ -134,7 +134,7 @@ fun Register(modifier: Modifier = Modifier) {
                 Spacer(modifier = Modifier.height(30.dp))
 
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { Register() },
                     modifier = Modifier
                         .padding(vertical = 2.dp, horizontal = 2.dp)
                         .fillMaxWidth()
