@@ -5,8 +5,8 @@ Android version of [newsApp-iOS](https://github.com/Reu-Amissah/newsApp-iOS) wit
 - [x] Landing Page
 - [x] Login Page
 - [x] Register/ Sign In page
-- [ ] Home Page/ Trending
-- [ ] Application Icon
+- [x] Home Page/ Trending
+- [x] Application Icon
 - [ ] User Authentication with Firebase, LogIn
 - [ ] User Authentication with Firebase, Register
 - [ ] Navigate to Homepage after Login
