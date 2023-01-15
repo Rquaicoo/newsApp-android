@@ -1,5 +1,9 @@
-# newsApp-Android
-Android version of [newsApp-iOS](https://github.com/Reu-Amissah/newsApp-iOS) with Compose
+# Influxnews
+Android version of [Influxnews](https://github.com/Reu-Amissah/newsApp-iOS) with Compose
+
+Influxnews is a news app which will run natively on both Android and iOS. It will allow users to obtain news from various sources, and
+it will have a recommendation engine that will predict news that may be interesting to a variety of users.
+The news will be obtained via the [NewsCatcher API](https://newscatcherapi.com/).
 
 ## Features
 - [x] Landing Page
