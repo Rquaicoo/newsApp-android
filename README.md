@@ -11,10 +11,12 @@ The news will be obtained via the [NewsCatcher API](https://newscatcherapi.com/)
 - [x] Register/ Sign In page
 - [x] Home Page/ Trending
 - [x] Application Icon
-- [ ] User Authentication with Firebase, LogIn
-- [ ] User Authentication with Firebase, Register
-- [ ] Navigate to Homepage after Login
-- [ ] Navigate to Homepage after Register
+- [x] User Authentication with Firebase, LogIn
+- [x] User Authentication with Firebase, Register
+- [x] Navigate to Homepage after Login
+- [x] Navigate to Homepage after Register
+- [ ] Third party authentication
+- [ ] Auth integration with custom backend
 - [ ] Fetch news from API
 - [ ] Notification functionality
 
