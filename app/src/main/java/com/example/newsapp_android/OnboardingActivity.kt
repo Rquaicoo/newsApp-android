@@ -1,6 +1,8 @@
 package com.example.newsapp_android
 
 
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -8,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -20,9 +23,32 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.newsapp_android.ui.theme.NewsAppandroidTheme
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+
 
 @Composable
-fun OnboardingComponent(modifier: Modifier = Modifier, OnRegisterClick : () -> Unit = {}, OnLoginClick : () -> Unit = {}) {
+fun OnboardingComponent(
+    modifier: Modifier = Modifier,
+    OnRegisterClick: () -> Unit = {},
+    OnLoginClick: () -> Unit = {},
+    OnUserVerified: () -> Unit = {}
+) {
+
+    LaunchedEffect(Unit) {
+
+        var auth: FirebaseAuth = Firebase.auth
+
+        //check if user has signed in
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            Log.d(TAG, "checking..")
+            print(currentUser)
+            OnUserVerified()
+        }
+    }
+
     Surface(modifier = modifier) {
         Column(
             modifier = Modifier
@@ -40,8 +66,11 @@ fun OnboardingComponent(modifier: Modifier = Modifier, OnRegisterClick : () -> U
 
             Text(
                 "Get Started",
-                color = Color.White, fontSize = 15.sp, fontFamily = FontFamily(Font(R.font.arial)),
-                fontWeight = FontWeight.Normal, modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
+                color = Color.White,
+                fontSize = 15.sp,
+                fontFamily = FontFamily(Font(R.font.arial)),
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
             )
 
             Text(
@@ -59,15 +88,20 @@ fun OnboardingComponent(modifier: Modifier = Modifier, OnRegisterClick : () -> U
 
             Text(
                 "the easiest way to stay updated",
-                color = Color.White, fontSize = 15.sp, fontFamily = FontFamily(Font(R.font.arial)),
-                fontWeight = FontWeight.Normal, modifier = Modifier.padding(vertical = 2.dp, horizontal = 20.dp)
+                color = Color.White,
+                fontSize = 15.sp,
+                fontFamily = FontFamily(Font(R.font.arial)),
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier.padding(vertical = 2.dp, horizontal = 20.dp)
             )
 
             Spacer(modifier = Modifier.weight(1f))
 
-            Row(modifier = Modifier
-                .height(70.dp)
-                .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+            Row(
+                modifier = Modifier
+                    .height(70.dp)
+                    .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
                 Button(
                     onClick = {
                         OnRegisterClick()
@@ -81,14 +115,18 @@ fun OnboardingComponent(modifier: Modifier = Modifier, OnRegisterClick : () -> U
                 ) {
                     Text(
                         "Register",
-                        color = Color.White, fontSize = 20.sp, fontFamily = FontFamily(Font(R.font.arial)),
-                        fontWeight = FontWeight.Normal, textAlign = TextAlign.Center, modifier = Modifier.padding(vertical = 2.dp, horizontal = 2.dp)
+                        color = Color.White,
+                        fontSize = 20.sp,
+                        fontFamily = FontFamily(Font(R.font.arial)),
+                        fontWeight = FontWeight.Normal,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(vertical = 2.dp, horizontal = 2.dp)
                     )
                 }
 
                 Button(
                     onClick = {
-                              OnLoginClick()
+                        OnLoginClick()
                     },
                     modifier = Modifier
                         .height(58.dp)
@@ -99,14 +137,17 @@ fun OnboardingComponent(modifier: Modifier = Modifier, OnRegisterClick : () -> U
                 ) {
                     Text(
                         "Login",
-                        color = Color(0x00, 0x27,0x54), fontSize = 20.sp, fontFamily = FontFamily(Font(R.font.arial)),
-                        fontWeight = FontWeight.Normal, textAlign = TextAlign.Center, modifier = Modifier.padding(vertical = 2.dp, horizontal = 2.dp)
+                        color = Color(0x00, 0x27, 0x54),
+                        fontSize = 20.sp,
+                        fontFamily = FontFamily(Font(R.font.arial)),
+                        fontWeight = FontWeight.Normal,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(vertical = 2.dp, horizontal = 2.dp)
                     )
                 }
             }
         }
     }
-
 }
 
 
