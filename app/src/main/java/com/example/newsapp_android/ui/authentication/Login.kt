@@ -1,12 +1,14 @@
 package com.example.newsapp_android.ui.authentication
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.runtime.Composable
@@ -18,23 +20,36 @@ import androidx.compose.ui.Modifier
 import androidx.compose.material3.CheckboxColors
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.newsapp_android.R
 import com.example.newsapp_android.ui.theme.NewsAppandroidTheme
+import com.example.newsapp_android.authentication.Login
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Login(modifier: Modifier = Modifier, Login : () -> Unit = {}) {
-    var text by remember { mutableStateOf("") }
+fun Login(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, OnLoginSuccess : () -> Unit = {}) {
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
     var rememberMeChecked by remember { mutableStateOf(true) }
+
+
 
     Surface(modifier = modifier.background(color = Color.White)) {
         Column( modifier = Modifier.background(color = Color.White)) {
@@ -43,6 +58,9 @@ fun Login(modifier: Modifier = Modifier, Login : () -> Unit = {}) {
                     .padding(horizontal = 20.dp, vertical = 10.dp)
                     .background(color = Color.White)
             ) {
+
+                var context = LocalContext.current
+
                 Text(
                     "Welcome Back",
                     color = Color(0x00, 0x27, 0x54),
@@ -65,11 +83,11 @@ fun Login(modifier: Modifier = Modifier, Login : () -> Unit = {}) {
                 Spacer(modifier = Modifier.height(30.dp))
 
                 OutlinedTextField(
-                    value = text,
-                    onValueChange = { text = it },
+                    value = email,
+                    onValueChange = { email = it.trim() },
                     placeholder = {
                         Text(
-                            "Enter username here...", fontSize = 15.sp,
+                            "Enter email here...", fontSize = 15.sp,
                             lineHeight = 17.sp,
                             fontStyle = FontStyle.Normal,
                             fontFamily = FontFamily(Font(R.font.arial)),
@@ -82,15 +100,18 @@ fun Login(modifier: Modifier = Modifier, Login : () -> Unit = {}) {
                         .background(Color(0xF1, 0xF5, 0xF7), shape = RoundedCornerShape(10.dp)),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = Color(0xF1, 0xF5, 0xF7),
-                        unfocusedBorderColor = Color(0xF1, 0xF5, 0xF7)
+                        unfocusedBorderColor = Color(0xF1, 0xF5, 0xF7),
+                        textColor = Color.Black
                     ),
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
 
                 OutlinedTextField(
-                    value = text,
-                    onValueChange = { text = it },
+                    value = password,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, imeAction = ImeAction.Done),
+                    onValueChange = { password = it.trim() },
+
                     placeholder = {
                         Text(
                             "Password", fontSize = 15.sp,
@@ -106,8 +127,10 @@ fun Login(modifier: Modifier = Modifier, Login : () -> Unit = {}) {
                         .background(Color(0xF1, 0xF5, 0xF7), shape = RoundedCornerShape(10.dp)),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = Color(0xF1, 0xF5, 0xF7),
-                        unfocusedBorderColor = Color(0xF1, 0xF5, 0xF7)
+                        unfocusedBorderColor = Color(0xF1, 0xF5, 0xF7),
+                        textColor = Color.Black
                     ),
+                    visualTransformation = PasswordVisualTransformation()
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -146,7 +169,15 @@ fun Login(modifier: Modifier = Modifier, Login : () -> Unit = {}) {
                 Spacer(modifier = Modifier.height(30.dp))
                 
                 Button(
-                    onClick = { Login() },
+                    onClick = {
+                        Login().LoginUser(
+                            email = email,
+                            password = password,
+                            auth,
+                            OnSuccess = OnLoginSuccess,
+                            OnFailure = { Toast.makeText(context, "Login failed. Please try again.", Toast.LENGTH_LONG) },
+                        )
+                              },
                     modifier = Modifier
                         .padding(vertical = 2.dp, horizontal = 2.dp)
                         .fillMaxWidth()
@@ -155,7 +186,7 @@ fun Login(modifier: Modifier = Modifier, Login : () -> Unit = {}) {
                     colors = ButtonDefaults.buttonColors(Color(0xF6, 0x76, 0x00))
                 ) {
                     Text(
-                        "Create an Account",
+                        "Login",
                         color = Color.White,
                         fontSize = 20.sp,
                         fontFamily = FontFamily(Font(R.font.arial)),
@@ -287,7 +318,13 @@ fun Login(modifier: Modifier = Modifier, Login : () -> Unit = {}) {
 @Preview(widthDp = 500, heightDp = 640, showBackground = true, uiMode = UI_MODE_NIGHT_YES)
 @Composable
 fun LoginPreview() {
+    var options = FirebaseOptions.Builder()
+        .setApiKey("AIzaSyDEFPHI2FKYANUz8O7MdtAMjBTyRCt47M4")
+        .setApplicationId("1:1001854651982:android:81e07558d061953165fd1f")
+        .build()
+
     NewsAppandroidTheme {
+        //FirebaseApp.initializeApp(LocalContext.current, options)
         Login(modifier = Modifier)
     }
 }
