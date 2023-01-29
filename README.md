@@ -15,7 +15,7 @@ The news will be obtained via the [NewsCatcher API](https://newscatcherapi.com/)
 - [x] User Authentication with Firebase, Register
 - [x] Navigate to Homepage after Login
 - [x] Navigate to Homepage after Register
-- [ ] Third party authentication
+- [x] Third party authentication
 - [ ] Auth integration with custom backend
 - [ ] Fetch news from API
 - [ ] Notification functionality
