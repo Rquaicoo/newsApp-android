@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">newsApp-android</string>
+    <string name="app_name">Influxnews</string>
     <string name="title_activity_onboarding">Onboarding</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
@@ -50,4 +50,8 @@
     <string name="tech">Technology</string>
 
     <string name="title_activity_main">MainActivity</string>
+
+    <string name="facebook_app_id">1271917850339715</string>
+    <string name="facebook_client_token">9b49944e614c449e9be416ceba0d60d6</string>
+
 </resources>

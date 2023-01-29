@@ -1,7 +1,9 @@
 package com.example.newsapp_android.ui.authentication
 
 import android.content.ContentValues
+import android.content.Intent
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.media.FaceDetector.Face
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -32,15 +34,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.newsapp_android.R
+import com.example.newsapp_android.authentication.FacebookAuth
+import com.example.newsapp_android.authentication.GoogleAuth
 import com.example.newsapp_android.ui.theme.NewsAppandroidTheme
 import com.example.newsapp_android.authentication.Register
+import com.facebook.CallbackManager
+import com.facebook.FacebookSdk
+import com.facebook.login.widget.LoginButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Register(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, OnRegisterSuccess: () -> Unit = {}) {
+fun Register(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, facebookLoginButton: LoginButton = LoginButton(LocalContext.current), OnRegisterSuccess: () -> Unit = {}) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmedPassword by remember { mutableStateOf("") }
@@ -88,7 +95,8 @@ fun Register(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, 
                         )
                     },
                     shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .background(Color(0xF1, 0xF5, 0xF7), shape = RoundedCornerShape(10.dp)),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = Color(0xF1, 0xF5, 0xF7),
@@ -113,7 +121,8 @@ fun Register(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, 
                         )
                     },
                     shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .background(Color(0xF1, 0xF5, 0xF7), shape = RoundedCornerShape(10.dp)),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = Color(0xF1, 0xF5, 0xF7),
@@ -139,7 +148,8 @@ fun Register(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, 
                         )
                     },
                     shape = RoundedCornerShape(10.dp),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .background(Color(0xF1, 0xF5, 0xF7), shape = RoundedCornerShape(10.dp)),
                     colors = TextFieldDefaults.outlinedTextFieldColors(
                         focusedBorderColor = Color(0xF1, 0xF5, 0xF7),
@@ -235,11 +245,25 @@ fun Register(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, 
                     )
                 }
                 
-                Row(modifier = Modifier.fillMaxWidth().padding(vertical = 10.dp).height(100.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 10.dp)
+                    .height(100.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+
+                                  val facebookAuth = FacebookAuth(
+                                      OnSuccess = OnRegisterSuccess,
+                                      OnFailure = { Toast.makeText(context, "Sign up failed", Toast.LENGTH_LONG).show() }
+                                  )
+
+                                    val intent = Intent(context, facebookAuth::class.java)
+                                    context.startActivity(intent)
+                        },
                         colors = buttonColors(Color(0x00, 0x27, 0x54)),
-                        modifier = Modifier.height(57.dp).width(172.dp),
+                        modifier = Modifier
+                            .height(57.dp)
+                            .width(172.dp),
                         shape = RoundedCornerShape(10.dp),
                     ) {
                         Row(modifier = Modifier, horizontalArrangement = Arrangement.SpaceBetween) {
@@ -263,9 +287,16 @@ fun Register(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, 
                     }
 
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            val googleAuth = GoogleAuth()
+
+                            val intent = Intent(context, googleAuth::class.java)
+                            context.startActivity(intent)
+                        },
                         colors = buttonColors(Color(0xFF, 0xFF, 0xFF)),
-                        modifier = Modifier.height(57.dp).width(172.dp),
+                        modifier = Modifier
+                            .height(57.dp)
+                            .width(172.dp),
                         shape = RoundedCornerShape(10.dp),
                         border = BorderStroke(1.dp, Color(0xE8, 0xE8, 0xE8))
                     ) {
