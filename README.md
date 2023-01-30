@@ -19,6 +19,7 @@ The news will be obtained via the [NewsCatcher API](https://newscatcherapi.com/)
 - [ ] Auth integration with custom backend
 - [ ] Fetch news from API
 - [ ] Notification functionality
+- [ ] Move to production
 
 
 ## Figma
