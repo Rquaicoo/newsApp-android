@@ -1,118 +1,59 @@
 package com.example.newsapp_android.authentication
 
-import android.app.Activity
+
 import android.content.ContentValues.TAG
-import android.content.Intent
-import android.content.IntentSender
-import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
-import com.example.newsapp_android.R
+import android.content.Context
+import android.util.Log
 import com.google.android.gms.auth.api.identity.BeginSignInRequest
 import com.google.android.gms.auth.api.identity.Identity
-import com.google.android.gms.auth.api.identity.SignInClient
-import android.util.Log
-import com.google.android.gms.common.api.ApiException
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.IntentSenderRequest
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.tasks.await
 
-class GoogleAuth : Activity() {
+class GoogleAuth {
 
-    private lateinit var oneTapClient: SignInClient
-    private lateinit var signUpRequest: BeginSignInRequest
-
-    private val REQ_ONE_TAP = 2
-    private var showOneTapUI = true
-
-    private lateinit var auth: FirebaseAuth
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        oneTapClient = Identity.getSignInClient(this)
-        signUpRequest = BeginSignInRequest.builder()
+    suspend fun signIn(context: Context, launcher: ActivityResultLauncher<IntentSenderRequest>, client_id: String) {
+        val oneTapClient = Identity.getSignInClient(context)
+        val signUpRequest = BeginSignInRequest.builder()
             .setGoogleIdTokenRequestOptions(
                 BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
-                    .setServerClientId(getString(R.string.default_web_client_id))
+                    .setServerClientId(client_id)
                     .setFilterByAuthorizedAccounts(false)
                     .build()
             )
+            .setAutoSelectEnabled(true)
             .build()
 
-        auth = Firebase.auth
+        Log.d(TAG, "One tap build completed")
 
-        oneTapClient.beginSignIn(signUpRequest)
-            .addOnSuccessListener(this) { result ->
-                try {
-                    startIntentSenderForResult(
-                        result.pendingIntent.intentSender, REQ_ONE_TAP,
-                        null, 0, 0, 0)
-                } catch (e: IntentSender.SendIntentException) {
-                    Log.e(TAG, "Couldn't start One Tap UI: ${e.localizedMessage}")
-                }
-            }
-            .addOnFailureListener(this) { e ->
-                // No Google Accounts found. Just continue presenting the signed-out UI.
-                Log.d(TAG, e.localizedMessage)
-            }
-    }
+        try {
+            val result = oneTapClient.beginSignIn(signUpRequest).await()
 
-    override fun onStart() {
-        super.onStart()
-        val user = auth.currentUser
-        updateUI(user)
-    }
+            //construct required intent sender by launcher
+            val intentSenderRequest = IntentSenderRequest.Builder(result.pendingIntent).build()
+            launcher.launch(intentSenderRequest)
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+        }
 
-        when(requestCode) {
-            REQ_ONE_TAP -> {
-                try {
-                    val credential = oneTapClient.getSignInCredentialFromIntent(data)
-                    val idToken = credential.googleIdToken
-
-                    when {
-                        idToken != null -> {
-                            Log.d(TAG, "Got ID token")
-
-                            //exchange Google ID for Firebase credential and authenticate with credential
-
-                            val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
-                            auth.signInWithCredential(firebaseCredential)
-                                .addOnCompleteListener(this) {
-                                    task ->
-
-                                    if (task.isSuccessful) {
-                                        Log.d(TAG, "signInWithCredential:success")
-                                        val user = auth.currentUser
-                                        updateUI(user)
-                                    }
-
-                                    else {
-                                        Log.w(TAG, "signInWithCredential:failure", task.exception)
-                                        updateUI(null)
-                                    }
-                                }
-                        }
-
-                        else -> {
-                            Log.d(TAG, "No id token")
-                        }
-                    }
-                }
-                catch (e: ApiException) {
-                    Log.d(TAG, "API Exception: $e")
-                }
-            }
+        catch (e: Exception) {
+            val e = e.message.toString()
+            Log.d(TAG, "Exception occurred: $e")
         }
     }
 
-    private fun updateUI(user: FirebaseUser?) {
+    fun authenticateWithFirebase(idToken: String, context: Context, auth: FirebaseAuth, OnSuccess: () -> Unit, OnFailure: () -> Unit) {
+        val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
+        val authenticate = auth.signInWithCredential(firebaseCredential)
 
+        if (authenticate.isSuccessful) {
+            OnSuccess()
+        }
+        else {
+            OnFailure()
+        }
     }
 }

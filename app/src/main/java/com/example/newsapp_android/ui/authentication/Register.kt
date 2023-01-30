@@ -1,22 +1,23 @@
 package com.example.newsapp_android.ui.authentication
 
+import android.app.Activity
 import android.content.ContentValues
-import android.content.Intent
+import android.content.ContentValues.TAG
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
-import android.media.FaceDetector.Face
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultRegistryOwner
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.material3.ButtonDefaults.buttonColors
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -28,22 +29,26 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.newsapp_android.R
-import com.example.newsapp_android.authentication.FacebookAuth
 import com.example.newsapp_android.authentication.GoogleAuth
 import com.example.newsapp_android.ui.theme.NewsAppandroidTheme
 import com.example.newsapp_android.authentication.Register
 import com.facebook.CallbackManager
-import com.facebook.FacebookSdk
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
 import com.facebook.login.widget.LoginButton
+import com.google.android.gms.auth.api.identity.Identity
+import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,6 +56,77 @@ fun Register(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, 
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmedPassword by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val googleAuth = GoogleAuth()
+    
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartIntentSenderForResult()
+    ) {
+        result ->
+        if(result.resultCode != Activity.RESULT_OK) {
+            if (result.data?.action == ActivityResultContracts.StartIntentSenderForResult.ACTION_INTENT_SENDER_REQUEST) {
+                
+            }
+            return@rememberLauncherForActivityResult
+        }
+        
+        val oneTapClient = Identity.getSignInClient(context)
+        val credential = oneTapClient.getSignInCredentialFromIntent(result.data)
+        val idToken = credential.googleIdToken
+        
+        if (idToken != null) {
+            //authenticate with backend
+            googleAuth.authenticateWithFirebase(
+                idToken = idToken,
+                context = context, auth = auth,
+                OnSuccess = { OnRegisterSuccess },
+                OnFailure = { Toast.makeText(context, "Sign up failed", Toast.LENGTH_LONG).show() }
+            )
+        }
+        else {
+            Log.d(TAG, "Token is null")
+        }
+                
+    }
+
+    val callbackManager = CallbackManager.Factory.create()
+
+    LoginManager.getInstance().registerCallback(callbackManager, object: FacebookCallback<LoginResult> {
+        override fun onSuccess(result: LoginResult) {
+            if (result != null) {
+                Log.d(TAG, "handleFacebookAccessToken:${result.accessToken}")
+
+                val credential = FacebookAuthProvider.getCredential(result.accessToken.token)
+
+                val authenticate = auth.signInWithCredential(credential)
+
+                Thread.sleep(5_000)
+
+                if (authenticate.isSuccessful) {
+                    OnRegisterSuccess()
+                }
+                else{
+                    Log.d(TAG, "auth failed..")
+                    Toast.makeText(context, "Sign up failed", Toast.LENGTH_LONG).show()
+                }
+            }
+            else {
+                Toast.makeText(context, "Sign up failed", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        override fun onCancel() {
+            Log.d(TAG, "Request cancelled")
+        }
+
+        override fun onError(error: FacebookException) {
+            Log.d(TAG, "FB error: $error")
+            Toast.makeText(context, "Sign up failed", Toast.LENGTH_LONG).show()
+        }
+    })
+
+
+    
 
 
     Surface(modifier = modifier.background(color = Color.White)) {
@@ -60,7 +136,8 @@ fun Register(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, 
                     .padding(horizontal = 20.dp, vertical = 10.dp)
                     .background(color = Color.White)
             ) {
-                var context = LocalContext.current
+                val scope = rememberCoroutineScope()
+
                 Text(
                     "Create an account",
                     color = Color(0x00, 0x27, 0x54),
@@ -251,14 +328,12 @@ fun Register(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, 
                     .height(100.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
                     Button(
                         onClick = {
+                            val permissions = listOf("email", "public_profile")
+                            LoginManager.getInstance().logIn(context as ActivityResultRegistryOwner, callbackManager, permissions)
 
-                                  val facebookAuth = FacebookAuth(
-                                      OnSuccess = OnRegisterSuccess,
-                                      OnFailure = { Toast.makeText(context, "Sign up failed", Toast.LENGTH_LONG).show() }
-                                  )
 
-                                    val intent = Intent(context, facebookAuth::class.java)
-                                    context.startActivity(intent)
+                            Log.d(TAG, "Facebook auth triggered")
+
                         },
                         colors = buttonColors(Color(0x00, 0x27, 0x54)),
                         modifier = Modifier
@@ -288,10 +363,11 @@ fun Register(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, 
 
                     Button(
                         onClick = {
-                            val googleAuth = GoogleAuth()
 
-                            val intent = Intent(context, googleAuth::class.java)
-                            context.startActivity(intent)
+                            scope.launch {
+                                googleAuth.signIn(context, launcher, "1001854651982-rpecr524dr4jujr1b8a229njnevnphn1.apps.googleusercontent.com")
+                                Log.d(TAG, "Google auth triggered")
+                            }
                         },
                         colors = buttonColors(Color(0xFF, 0xFF, 0xFF)),
                         modifier = Modifier
