@@ -33,10 +33,10 @@ fun NewsApp(modifier: Modifier) {
                 OnboardingComponent(OnRegisterClick = { navController.navigate("register") }, OnLoginClick = { navController.navigate("login") }, OnUserVerified = { navController.navigate("home") })
             }
             composable(Login.route) {
-                Login( OnLoginSuccess = { navController.navigate(("home"))} )
+                Login( OnLoginSuccess = { navController.navigate(("home"))}, NavigateToRegister = { navController.navigate("register") } )
             }
             composable(Register.route) {
-                Register( OnRegisterSuccess = { navController.navigate(("home"))} )
+                Register( OnRegisterSuccess = { navController.navigate(("home"))}, NavigateToLogin = { navController.navigate("login")} )
             }
             composable(Home.route) {
                 Home()

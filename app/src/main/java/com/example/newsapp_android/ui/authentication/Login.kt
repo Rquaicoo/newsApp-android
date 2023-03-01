@@ -1,23 +1,25 @@
 package com.example.newsapp_android.ui.authentication
 
+import android.app.Activity
+import android.content.ContentValues
+import android.content.ContentValues.TAG
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultRegistryOwner
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.material3.ButtonDefaults.buttonColors
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.material3.CheckboxColors
+import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -34,21 +36,98 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.newsapp_android.R
+import com.example.newsapp_android.authentication.GoogleAuth
 import com.example.newsapp_android.ui.theme.NewsAppandroidTheme
 import com.example.newsapp_android.authentication.Login
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginManager
+import com.facebook.login.LoginResult
+import com.google.android.gms.auth.api.identity.Identity
 import com.google.firebase.FirebaseApp
 import com.google.firebase.FirebaseOptions
+import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Login(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, OnLoginSuccess : () -> Unit = {}) {
+fun Login(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, OnLoginSuccess : () -> Unit = {}, NavigateToRegister: () -> Unit = {}) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var rememberMeChecked by remember { mutableStateOf(true) }
+    var context = LocalContext.current
 
+    val googleAuth = GoogleAuth()
+
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartIntentSenderForResult()
+    ) {
+            result ->
+        if(result.resultCode != Activity.RESULT_OK) {
+            if (result.data?.action == ActivityResultContracts.StartIntentSenderForResult.ACTION_INTENT_SENDER_REQUEST) {
+
+            }
+            return@rememberLauncherForActivityResult
+        }
+
+        val oneTapClient = Identity.getSignInClient(context)
+        val credential = oneTapClient.getSignInCredentialFromIntent(result.data)
+        val idToken = credential.googleIdToken
+
+        if (idToken != null) {
+            //authenticate with backend
+            googleAuth.authenticateWithFirebase(
+                idToken = idToken,
+                context = context, auth = auth,
+                OnSuccess = { OnLoginSuccess() },
+                OnFailure = { Toast.makeText(context, "Sign up failed", Toast.LENGTH_LONG).show() }
+            )
+        }
+        else {
+            Log.d(TAG, "Token is null")
+        }
+
+    }
+
+    val callbackManager = CallbackManager.Factory.create()
+
+    LoginManager.getInstance().registerCallback(callbackManager, object: FacebookCallback<LoginResult> {
+        override fun onSuccess(result: LoginResult) {
+            if (result != null) {
+                Log.d(TAG, "handleFacebookAccessToken:${result.accessToken}")
+
+                val credential = FacebookAuthProvider.getCredential(result.accessToken.token)
+
+                val authenticate = auth.signInWithCredential(credential)
+
+                Thread.sleep(5_000)
+
+                if (authenticate.isSuccessful) {
+                    OnLoginSuccess()
+                }
+                else{
+                    Log.d(TAG, "auth failed..")
+                    Toast.makeText(context, "Sign up failed", Toast.LENGTH_LONG).show()
+                }
+            }
+            else {
+                Toast.makeText(context, "Sign up failed", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        override fun onCancel() {
+            Log.d(TAG, "Request cancelled")
+        }
+
+        override fun onError(error: FacebookException) {
+            Log.d(TAG, "FB error: $error")
+            Toast.makeText(context, "Sign up failed", Toast.LENGTH_LONG).show()
+        }
+    })
 
 
     Surface(modifier = modifier.background(color = Color.White)) {
@@ -58,8 +137,7 @@ fun Login(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, OnL
                     .padding(horizontal = 20.dp, vertical = 10.dp)
                     .background(color = Color.White)
             ) {
-
-                var context = LocalContext.current
+                val scope = rememberCoroutineScope()
 
                 Text(
                     "Welcome Back",
@@ -217,6 +295,9 @@ fun Login(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, OnL
                         fontFamily = FontFamily(Font(R.font.arial)),
                         lineHeight = 20.sp,
                         fontWeight = FontWeight.Normal,
+                        modifier = Modifier.clickable {
+                            NavigateToRegister()
+                        }
                     )
                 }
 
@@ -254,7 +335,13 @@ fun Login(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, OnL
                     .padding(vertical = 10.dp)
                     .height(100.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            val permissions = listOf("email", "public_profile")
+                            LoginManager.getInstance().logIn(context as ActivityResultRegistryOwner, callbackManager, permissions)
+
+
+                            Log.d(ContentValues.TAG, "Facebook auth triggered")
+                        },
                         colors = buttonColors(Color(0x00, 0x27, 0x54)),
                         modifier = Modifier
                             .height(57.dp)
@@ -282,7 +369,12 @@ fun Login(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, OnL
                     }
 
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = {
+                            scope.launch {
+                                googleAuth.signIn(context, launcher, "1001854651982-rpecr524dr4jujr1b8a229njnevnphn1.apps.googleusercontent.com")
+                                Log.d(ContentValues.TAG, "Google auth triggered")
+                            }
+                        },
                         colors = buttonColors(Color(0xFF, 0xFF, 0xFF)),
                         modifier = Modifier
                             .height(57.dp)

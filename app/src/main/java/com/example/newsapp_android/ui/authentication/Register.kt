@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -52,7 +53,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Register(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, facebookLoginButton: LoginButton = LoginButton(LocalContext.current), OnRegisterSuccess: () -> Unit = {}) {
+fun Register(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, OnRegisterSuccess: () -> Unit = {}, NavigateToLogin: () -> Unit = {}) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmedPassword by remember { mutableStateOf("") }
@@ -290,6 +291,9 @@ fun Register(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, 
                         fontFamily = FontFamily(Font(R.font.arial)),
                         lineHeight = 20.sp,
                         fontWeight = FontWeight.Normal,
+                        modifier = Modifier.clickable {
+                            NavigateToLogin()
+                        }
                     )
                 }
 
