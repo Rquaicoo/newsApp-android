@@ -49,6 +49,8 @@ class GoogleAuth {
         val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
         val authenticate = auth.signInWithCredential(firebaseCredential)
 
+        Thread.sleep(5_000)
+
         if (authenticate.isSuccessful) {
             OnSuccess()
         }
