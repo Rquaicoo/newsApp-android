@@ -54,5 +54,6 @@
     <string name="facebook_app_id">1271917850339715</string>
     <string name="fb_login_protocol_scheme">fb1271917850339715</string>
     <string name="facebook_client_token">9b49944e614c449e9be416ceba0d60d6</string>
+    <string name="title_activity_app_content">AppContentActivity</string>
 
 </resources>
