@@ -39,6 +39,8 @@ import com.example.newsapp_android.R
 import com.example.newsapp_android.authentication.GoogleAuth
 import com.example.newsapp_android.ui.theme.NewsAppandroidTheme
 import com.example.newsapp_android.authentication.Login
+import com.example.newsapp_android.datastore.StoreUserEmail
+import com.example.newsapp_android.datastore.StoreUserPassword
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
@@ -60,6 +62,9 @@ fun Login(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, OnL
     var password by remember { mutableStateOf("") }
     var rememberMeChecked by remember { mutableStateOf(true) }
     var context = LocalContext.current
+
+    val emailDataStore = StoreUserEmail(context)
+    val passwordDataStore = StoreUserPassword(context)
 
     val googleAuth = GoogleAuth()
 
@@ -252,7 +257,15 @@ fun Login(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, OnL
                             email = email,
                             password = password,
                             auth,
-                            OnSuccess = OnLoginSuccess,
+                            OnSuccess = {
+                                //save user password if remember me is checked
+                                scope.launch {
+                                    emailDataStore.saveEmail(email)
+                                    passwordDataStore.savePassword(password)
+                                }
+
+                                OnLoginSuccess
+                                        },
                             OnFailure = { Toast.makeText(context, "Login failed. Please try again.", Toast.LENGTH_LONG) },
                         )
                               },

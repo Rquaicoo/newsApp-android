@@ -1,7 +1,6 @@
 package com.example.newsapp_android.ui.authentication
 
 import android.app.Activity
-import android.content.ContentValues
 import android.content.ContentValues.TAG
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.util.Log
@@ -38,6 +37,9 @@ import com.example.newsapp_android.R
 import com.example.newsapp_android.authentication.GoogleAuth
 import com.example.newsapp_android.ui.theme.NewsAppandroidTheme
 import com.example.newsapp_android.authentication.Register
+import com.example.newsapp_android.datastore.StoreUserEmail
+import com.example.newsapp_android.datastore.StoreUserFullName
+import com.example.newsapp_android.datastore.StoreUserPassword
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
@@ -56,10 +58,13 @@ import kotlinx.coroutines.launch
 fun Register(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, OnRegisterSuccess: () -> Unit = {}, NavigateToLogin: () -> Unit = {}) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    var fullname by remember { mutableStateOf("") }
     var confirmedPassword by remember { mutableStateOf("") }
     val context = LocalContext.current
     val googleAuth = GoogleAuth()
-    
+
+    val fullNameDataStore = StoreUserFullName(context)
+
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartIntentSenderForResult()
     ) {
@@ -188,7 +193,7 @@ fun Register(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, 
                 OutlinedTextField(
                     value = password,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    onValueChange = { password = it.trim() },
+                    onValueChange = { password = it },
                     placeholder = {
                         Text(
                             "Password", fontSize = 15.sp,
@@ -214,7 +219,7 @@ fun Register(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, 
 
                 OutlinedTextField(
                     value = confirmedPassword,
-                    onValueChange = { confirmedPassword = it.trim() },
+                    onValueChange = { confirmedPassword = it },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     placeholder = {
                         Text(
@@ -237,6 +242,31 @@ fun Register(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, 
                     visualTransformation = PasswordVisualTransformation()
                 )
 
+                Spacer(modifier = Modifier.height(10.dp))
+
+                OutlinedTextField(
+                    value = fullname,
+                    onValueChange = { fullname = it.trim() },
+                    placeholder = {
+                        Text(
+                            "Full name", fontSize = 15.sp,
+                            lineHeight = 17.sp,
+                            fontStyle = FontStyle.Normal,
+                            fontFamily = FontFamily(Font(R.font.arial)),
+                            color = Color(0xB3, 0xB3, 0xB3)
+                        )
+                    },
+                    shape = RoundedCornerShape(10.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xF1, 0xF5, 0xF7), shape = RoundedCornerShape(10.dp)),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = Color(0xF1, 0xF5, 0xF7),
+                        unfocusedBorderColor = Color(0xF1, 0xF5, 0xF7),
+                        textColor = Color.Black
+                    ),
+                )
+
                 Spacer(modifier = Modifier.height(30.dp))
 
                 Button(
@@ -244,10 +274,19 @@ fun Register(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, 
                         var register = Register()
                               register.registerUser(
                                   email,
+                                  fullname,
                                   password,
                                   confirmedPassword,
                                   auth,
-                                  OnSuccess = OnRegisterSuccess,
+                                  OnSuccess = {
+                                      //save full name
+                                      scope.launch {
+                                          fullNameDataStore.saveFullName(fullname)
+                                      }
+
+                                      //invoke success function
+                                      OnRegisterSuccess
+                                              },
                                   OnFailure = { Toast.makeText(context, "Sign up failed", Toast.LENGTH_LONG).show() },
                                   OnPasswordRejected = { Toast.makeText(context, "Passwords are weak or do not match", Toast.LENGTH_LONG).show() }
                               )
