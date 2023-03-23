@@ -11,8 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.paint
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -33,7 +31,7 @@ val sections = listOf(R.string.news, R.string.sports, R.string.politics, R.strin
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Home(modifier: Modifier = Modifier) {
+fun HomeScreen(modifier: Modifier = Modifier) {
     Surface(modifier = modifier.background(color = Color(0xF1, 0xF5, 0xF7))) {
         Column(modifier = Modifier.background(color = Color(0xF1, 0xF5, 0xF7))) {
             Column(
@@ -268,6 +266,6 @@ fun Home(modifier: Modifier = Modifier) {
 @Composable
 fun HomePreview() {
     NewsAppandroidTheme {
-        Home(modifier = Modifier)
+        HomeScreen(modifier = Modifier)
     }
 }

@@ -4,12 +4,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.example.newsapp_android.bottom_tab.BottomTabNavGraph
+import com.example.newsapp_android.bottom_tab.CustomButtomTab
 import com.example.newsapp_android.ui.theme.NewsAppandroidTheme
  
 class AppContentActivity : ComponentActivity() {
@@ -17,27 +19,27 @@ class AppContentActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             NewsAppandroidTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Greeting("Android")
-                }
+                BottomNavigator()
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+fun BottomNavigator() {
+    val navController = rememberNavController()
+
+    Scaffold(bottomBar = { CustomButtomTab(navController = navController) }) {
+        Modifier.padding(it)
+        BottomTabNavGraph(navController = navController)
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview2() {
     NewsAppandroidTheme {
-        Greeting("Android")
+
     }
 }
