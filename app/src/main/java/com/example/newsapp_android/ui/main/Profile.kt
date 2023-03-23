@@ -1,32 +1,336 @@
 package com.example.newsapp_android.ui.main
 
-import androidx.compose.runtime.Composable
+import android.content.ContentValues
+import android.util.Log
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.newsapp_android.R
+import kotlinx.coroutines.launch
 
 @Composable
-fun ProfileScreen() {
+fun ProfileScreen(modifier: Modifier = Modifier) {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .background(Color(0xF6, 0xF6, 0xF6))
+
+        ) {
+            Text(
+                "Profile",
+                color = Color.Black,
+                fontSize = 27.sp,
+                fontFamily = FontFamily(Font(R.font.arial)),
+                lineHeight = 20.sp,
+                fontWeight = FontWeight.ExtraBold,
+                textAlign = TextAlign.Center
+            )
+
+
+            Column(modifier = Modifier
+                .height(10.dp)
+                .background(Color.White)
+                .fillMaxWidth()
+            ) {
+
+            }
+
+            Column(modifier = Modifier
+                .heightIn(min = 63.dp)
+                .background(Color.White)
+                .fillMaxWidth()
+            ) {
+                AccountDetails()
+            }
+
+            Spacer(modifier = Modifier.padding(vertical = 15.dp))
+
+            Column(modifier = Modifier
+                .heightIn(min = 63.dp)
+                .background(Color.White)
+                .fillMaxWidth()
+            ) {
+                OptionsSection()
+            }
+
+            Spacer(modifier = Modifier.padding(vertical = 15.dp))
+
+            Column(modifier = Modifier
+                .heightIn(min = 63.dp)
+                .background(Color.White)
+                .fillMaxWidth()
+            ) {
+                AccountSection()
+            }
+        }
 
 }
 
 @Composable
-fun AccountDetails() {
+fun AccountDetails(modifier: Modifier = Modifier) {
 
+        Row(modifier = Modifier.fillMaxWidth(fraction = 0.9f), verticalAlignment = Alignment.CenterVertically) {
+            Icon(
+                painter = painterResource(id = R.drawable.profile_thick),
+                tint = Color.Black,
+                contentDescription = "Profile icon",
+                modifier = Modifier
+                    .height(50.dp)
+                    .width(50.dp)
+                    .padding(horizontal = 10.dp, vertical = 5.dp)
+            )
+
+            Column(modifier = Modifier) {
+                Text(
+                    "Russell Quaicoo",
+                    color = Color.Black,
+                    fontSize = 16.sp,
+                    fontFamily = FontFamily(Font(R.font.arial)),
+                    lineHeight = 20.sp,
+                    fontWeight = FontWeight.W900,
+                )
+
+                Text(
+                    "russellquaicoo1@gmail.com",
+                    color = Color.Black,
+                    fontSize = 15.sp,
+                    fontFamily = FontFamily(Font(R.font.arial)),
+                    lineHeight = 20.sp,
+                    fontWeight = FontWeight.Normal,
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+            Icon(
+                painter = painterResource(id = R.drawable.next),
+                tint = Color.Black,
+                contentDescription = "Open",
+                modifier = Modifier
+                    .height(40.dp)
+                    .padding(start = 0.dp, top = 0.dp, end = 8.dp, bottom = 0.dp)
+            )
+        }
 }
 
 @Composable
-fun OptionsSection() {
+fun OptionsSection(modifier: Modifier = Modifier) {
 
+    var switchOn by remember { mutableStateOf(false) }
+
+    Column(modifier.fillMaxWidth(fraction = 0.9f)) {
+        Text(
+            "Options",
+            color = Color.Black,
+            fontSize = 16.sp,
+            fontFamily = FontFamily(Font(R.font.arial)),
+            lineHeight = 20.sp,
+            fontWeight = FontWeight.ExtraBold,
+        )
+
+        Divider(
+            color = Color(0xD7, 0xD7, 0xD7),
+            thickness = 1.dp,
+            modifier = Modifier
+                .padding(vertical = 10.dp)
+        )
+
+        Row(modifier = Modifier) {
+            Text(
+                "Notifications",
+                color = Color(0x95, 0x95, 0x95),
+                fontSize = 16.sp,
+                fontFamily = FontFamily(Font(R.font.arial)),
+                lineHeight = 20.sp,
+                fontWeight = FontWeight.ExtraBold,
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Switch(
+                checked = switchOn,
+                onCheckedChange = { switchOn_ ->
+                    switchOn = switchOn_
+                },
+                colors = SwitchDefaults.colors(
+                    checkedThumbColor = Color(0xF6, 0x76, 0x00),
+                    checkedTrackColor = Color.White,
+                    uncheckedTrackColor = Color(0xF2, 0xF2, 0xF2),
+                    uncheckedThumbColor = Color(0x94, 0x94, 0x94)
+                ),
+                modifier = Modifier.height(14.dp)
+            )
+
+        }
+
+        Row(modifier = Modifier.padding(vertical = 10.dp)) {
+            Text(
+                "Language",
+                color = Color(0x95, 0x95, 0x95),
+                fontSize = 16.sp,
+                fontFamily = FontFamily(Font(R.font.arial)),
+                lineHeight = 20.sp,
+                fontWeight = FontWeight.ExtraBold,
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Text(
+                "English",
+                color = Color(0x95, 0x95, 0x95),
+                fontSize = 16.sp,
+                fontFamily = FontFamily(Font(R.font.arial)),
+                lineHeight = 20.sp,
+                fontWeight = FontWeight.ExtraBold,
+            )
+        }
+    }
 }
 
 @Composable
-fun AccountSection  () {
+fun AccountSection(modifier: Modifier = Modifier) {
+    Column(modifier.fillMaxWidth(fraction = 0.9f)) {
+        Text(
+            "Account",
+            color = Color.Black,
+            fontSize = 16.sp,
+            fontFamily = FontFamily(Font(R.font.arial)),
+            lineHeight = 20.sp,
+            fontWeight = FontWeight.ExtraBold,
+        )
 
+        Divider(
+            color = Color(0xD7, 0xD7, 0xD7),
+            thickness = 1.dp,
+            modifier = Modifier
+                .padding(vertical = 10.dp)
+        )
+
+        Row(modifier = Modifier) {
+            Text(
+                "Edit profile",
+                color = Color(0x95, 0x95, 0x95),
+                fontSize = 16.sp,
+                fontFamily = FontFamily(Font(R.font.arial)),
+                lineHeight = 20.sp,
+                fontWeight = FontWeight.ExtraBold,
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Icon(
+                painter = painterResource(id = R.drawable.next),
+                contentDescription = "Open",
+                tint = Color(0x95, 0x95, 0x95),
+                modifier = Modifier
+                    .height(40.dp)
+                    .padding(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 0.dp)
+            )
+        }
+
+        Row(modifier = Modifier) {
+            Text(
+                "Change password",
+                color = Color(0x95, 0x95, 0x95),
+                fontSize = 16.sp,
+                fontFamily = FontFamily(Font(R.font.arial)),
+                lineHeight = 20.sp,
+                fontWeight = FontWeight.ExtraBold,
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Icon(
+                painter = painterResource(id = R.drawable.next),
+                contentDescription = "Open",
+                tint = Color(0x95, 0x95, 0x95),
+                modifier = Modifier
+                    .height(40.dp)
+                    .padding(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 0.dp)
+
+            )
+        }
+
+        Button(
+            onClick = {
+
+            },
+            colors = ButtonDefaults.buttonColors(Color(0xEE, 0xEE, 0xEE)),
+            modifier = Modifier
+                .height(32.dp)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(3.dp),
+            border = BorderStroke(1.dp, Color(0xE8, 0xE8, 0xE8))
+        ) {
+            Text(
+                "Logout",
+                color = Color(0x02, 0x38, 0x76),
+                fontSize = 15.sp,
+                fontFamily = FontFamily(Font(R.font.arial)),
+                lineHeight = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(horizontal = 0.dp, vertical = 0.dp )
+            )
+        }
+
+        Button(
+            onClick = {
+
+            },
+            colors = ButtonDefaults.buttonColors(Color(0xEE, 0xEE, 0xEE)),
+            modifier = Modifier
+                .padding(vertical = 6.dp)
+                .height(32.dp)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(3.dp),
+            border = BorderStroke(1.dp, Color(0xEA, 0xEA, 0xEA))
+        ) {
+            Text(
+                "Delete Account",
+                color = Color(0xF6, 0x76, 0x00),
+                fontSize = 15.sp,
+                fontFamily = FontFamily(Font(R.font.arial)),
+                lineHeight = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(horizontal = 0.dp, vertical = 0.dp )
+            )
+        }
+    }
 }
 
+@Preview(widthDp = 360, heightDp = 70, showBackground = true)
+@Composable
+fun AccountDetailsPreview() {
+    AccountDetails()
+}
 
+@Preview(widthDp = 360, heightDp = 110, showBackground = true)
+@Composable
+fun OptionsSectionPreview() {
+    OptionsSection()
+}
 
-@Preview
+@Preview(widthDp = 360, heightDp = 220, showBackground = true)
+@Composable
+fun AccountSectionPreview() {
+    AccountSection()
+}
+
+@Preview(widthDp = 360, heightDp = 450, showBackground = true)
 @Composable
 fun ProfileScreenPreview() {
-
+    ProfileScreen()
 }
