@@ -52,7 +52,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
             Column(modifier = Modifier
                 .heightIn(min = 63.dp)
                 .background(Color.White)
-                .fillMaxWidth()
+                .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AccountDetails()
             }
