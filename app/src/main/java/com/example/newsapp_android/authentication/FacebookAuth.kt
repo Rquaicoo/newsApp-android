@@ -75,19 +75,18 @@ class FacebookAuth(private val OnSuccess: () -> Unit = { }, private val OnFailur
 
         val credential = FacebookAuthProvider.getCredential(token.token)
 
-        val authenticate = auth.signInWithCredential(credential)
+        auth.signInWithCredential(credential)
+            .addOnSuccessListener {result ->
 
-        Thread.sleep(5_000)
+                Log.d("Login Success", "Facebook auth successful.. ${result.user?.email}")
+                OnSuccess()
+            }
 
-        if (authenticate.isSuccessful) {
-            updateUI(auth.currentUser)
-            OnLoginSuccess()
-        }
-        else{
-            Log.d(ContentValues.TAG, "auth failed..")
-            updateUI(null)
-            OnLoginFailure()
-        }
+            .addOnFailureListener {result ->
+
+                Log.d("Login Failure", "Facebook auth failed.. ${result.message}")
+                OnFailure()
+            }
 
     }
 

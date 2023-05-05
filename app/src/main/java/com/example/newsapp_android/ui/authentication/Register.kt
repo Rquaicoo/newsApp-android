@@ -85,7 +85,7 @@ fun Register(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, 
             googleAuth.authenticateWithFirebase(
                 idToken = idToken,
                 context = context, auth = auth,
-                OnSuccess = { OnRegisterSuccess },
+                OnSuccess = { OnRegisterSuccess() },
                 OnFailure = { Toast.makeText(context, "Sign up failed", Toast.LENGTH_LONG).show() }
             )
         }
@@ -104,17 +104,18 @@ fun Register(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, 
 
                 val credential = FacebookAuthProvider.getCredential(result.accessToken.token)
 
-                val authenticate = auth.signInWithCredential(credential)
+                 auth.signInWithCredential(credential)
+                    .addOnSuccessListener {result ->
 
-                Thread.sleep(5_000)
+                        Log.d("Login Success", "auth successful.. ${result.user?.email}")
+                        OnRegisterSuccess()
+                    }
 
-                if (authenticate.isSuccessful) {
-                    OnRegisterSuccess()
-                }
-                else{
-                    Log.d(TAG, "auth failed..")
-                    Toast.makeText(context, "Sign up failed", Toast.LENGTH_LONG).show()
-                }
+                    .addOnFailureListener {result ->
+
+                        Log.d("Facebook Login Failure", "auth failed.. ${result.message}")
+                        Toast.makeText(context, result.message.toString(), Toast.LENGTH_LONG).show()
+                    }
             }
             else {
                 Toast.makeText(context, "Sign up failed", Toast.LENGTH_LONG).show()
@@ -285,7 +286,7 @@ fun Register(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, 
                                       }
 
                                       //invoke success function
-                                      OnRegisterSuccess
+                                      OnRegisterSuccess()
                                               },
                                   OnFailure = { Toast.makeText(context, "Sign up failed", Toast.LENGTH_LONG).show() },
                                   OnPasswordRejected = { Toast.makeText(context, "Passwords are weak or do not match", Toast.LENGTH_LONG).show() }

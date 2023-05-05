@@ -107,17 +107,18 @@ fun Login(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, OnL
 
                 val credential = FacebookAuthProvider.getCredential(result.accessToken.token)
 
-                val authenticate = auth.signInWithCredential(credential)
+                auth.signInWithCredential(credential)
+                    .addOnSuccessListener {result ->
 
-                Thread.sleep(5_000)
+                        Log.d("Login Success", "auth successful.. ${result.user?.displayName}")
+                        OnLoginSuccess()
+                    }
 
-                if (authenticate.isSuccessful) {
-                    OnLoginSuccess()
-                }
-                else{
-                    Log.d(TAG, "auth failed..")
-                    Toast.makeText(context, "Sign up failed", Toast.LENGTH_LONG).show()
-                }
+                    .addOnFailureListener {result ->
+
+                        Log.d("Facebook Login Failure", "auth failed.. ${result.message}")
+                        Toast.makeText(context, result.message.toString(), Toast.LENGTH_LONG).show()
+                    }
             }
             else {
                 Toast.makeText(context, "Sign up failed", Toast.LENGTH_LONG).show()
@@ -264,9 +265,13 @@ fun Login(modifier: Modifier = Modifier, auth: FirebaseAuth = Firebase.auth, OnL
                                     passwordDataStore.savePassword(password)
                                 }
 
-                                OnLoginSuccess
+                                OnLoginSuccess()
                                         },
-                            OnFailure = { Toast.makeText(context, "Login failed. Please try again.", Toast.LENGTH_LONG) },
+                            OnFailure = {
+                                Log.e("Login Failure Invoked", "Login Failed")
+
+                                Toast.makeText(context, "Login failed. Please try again.", Toast.LENGTH_LONG).show()
+                                        },
                         )
                               },
                     modifier = Modifier

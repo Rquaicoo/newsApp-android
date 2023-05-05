@@ -47,15 +47,18 @@ class GoogleAuth {
 
     fun authenticateWithFirebase(idToken: String, context: Context, auth: FirebaseAuth, OnSuccess: () -> Unit, OnFailure: () -> Unit) {
         val firebaseCredential = GoogleAuthProvider.getCredential(idToken, null)
-        val authenticate = auth.signInWithCredential(firebaseCredential)
 
-        Thread.sleep(5_000)
+        auth.signInWithCredential(firebaseCredential)
+            .addOnSuccessListener {result ->
 
-        if (authenticate.isSuccessful) {
-            OnSuccess()
-        }
-        else {
-            OnFailure()
-        }
+                Log.d("Login Success", "Google auth successful.. ${result.user?.email}")
+                OnSuccess()
+            }
+
+            .addOnFailureListener {result ->
+
+                Log.d("Login Failure", "Googgle auth failed.. ${result.message}")
+                OnFailure()
+            }
     }
 }
