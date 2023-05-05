@@ -33,7 +33,6 @@ fun OnboardingComponent(
     modifier: Modifier = Modifier,
     OnRegisterClick: () -> Unit = {},
     OnLoginClick: () -> Unit = {},
-    OnUserVerified: () -> Unit = {}
 ) {
 
     LaunchedEffect(Unit) {
@@ -45,7 +44,6 @@ fun OnboardingComponent(
         if (currentUser != null) {
             Log.d(TAG, "checking..")
             print(currentUser)
-            OnUserVerified()
         }
     }
 
