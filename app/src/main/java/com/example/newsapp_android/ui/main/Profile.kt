@@ -10,6 +10,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
@@ -20,10 +21,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.newsapp_android.R
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 
 @Composable
-fun ProfileScreen(modifier: Modifier = Modifier) {
+fun ProfileScreen(modifier: Modifier = Modifier, OnSignOut: () -> Unit) {
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -37,7 +40,8 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
                 fontFamily = FontFamily(Font(R.font.arial)),
                 lineHeight = 20.sp,
                 fontWeight = FontWeight.ExtraBold,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(top=10.dp, bottom = 10.dp)
             )
 
 
@@ -62,7 +66,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
             Column(modifier = Modifier
                 .heightIn(min = 63.dp)
                 .background(Color.White)
-                .fillMaxWidth()
+                .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 OptionsSection()
             }
@@ -72,7 +76,7 @@ fun ProfileScreen(modifier: Modifier = Modifier) {
             Column(modifier = Modifier
                 .heightIn(min = 63.dp)
                 .background(Color.White)
-                .fillMaxWidth()
+                .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AccountSection()
             }
@@ -127,6 +131,7 @@ fun AccountDetails(modifier: Modifier = Modifier) {
 }
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 fun OptionsSection(modifier: Modifier = Modifier) {
 
     var switchOn by remember { mutableStateOf(false) }
@@ -139,6 +144,7 @@ fun OptionsSection(modifier: Modifier = Modifier) {
             fontFamily = FontFamily(Font(R.font.arial)),
             lineHeight = 20.sp,
             fontWeight = FontWeight.ExtraBold,
+            modifier = Modifier.padding(top=5.dp, bottom = 5.dp)
         )
 
         Divider(
@@ -167,11 +173,13 @@ fun OptionsSection(modifier: Modifier = Modifier) {
                 },
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = Color(0xF6, 0x76, 0x00),
-                    checkedTrackColor = Color.White,
+                    checkedTrackColor = Color(0xF2, 0xF2, 0xF2),
                     uncheckedTrackColor = Color(0xF2, 0xF2, 0xF2),
                     uncheckedThumbColor = Color(0x94, 0x94, 0x94)
                 ),
-                modifier = Modifier.height(14.dp)
+                modifier = Modifier
+                    .scale(0.6f)
+                    .height(10.dp)
             )
 
         }
@@ -210,6 +218,7 @@ fun AccountSection(modifier: Modifier = Modifier) {
             fontFamily = FontFamily(Font(R.font.arial)),
             lineHeight = 20.sp,
             fontWeight = FontWeight.ExtraBold,
+            modifier = Modifier.padding(top=5.dp, bottom = 5.dp)
         )
 
         Divider(
@@ -266,14 +275,14 @@ fun AccountSection(modifier: Modifier = Modifier) {
 
         Button(
             onClick = {
-
+                Firebase.auth.signOut()
             },
             colors = ButtonDefaults.buttonColors(Color(0xEE, 0xEE, 0xEE)),
             modifier = Modifier
-                .height(32.dp)
+                .height(35.dp)
                 .fillMaxWidth(),
             shape = RoundedCornerShape(3.dp),
-            border = BorderStroke(1.dp, Color(0xE8, 0xE8, 0xE8))
+            border = BorderStroke(1.dp, Color(0xE8, 0xE8, 0xE8)),
         ) {
             Text(
                 "Logout",
@@ -293,7 +302,7 @@ fun AccountSection(modifier: Modifier = Modifier) {
             colors = ButtonDefaults.buttonColors(Color(0xEE, 0xEE, 0xEE)),
             modifier = Modifier
                 .padding(vertical = 6.dp)
-                .height(32.dp)
+                .height(35.dp)
                 .fillMaxWidth(),
             shape = RoundedCornerShape(3.dp),
             border = BorderStroke(1.dp, Color(0xEA, 0xEA, 0xEA))
@@ -329,8 +338,8 @@ fun AccountSectionPreview() {
     AccountSection()
 }
 
-@Preview(widthDp = 360, heightDp = 450, showBackground = true)
+@Preview(widthDp = 360, heightDp = 550, showBackground = true)
 @Composable
 fun ProfileScreenPreview() {
-    ProfileScreen()
+    ProfileScreen(OnSignOut = { })
 }
