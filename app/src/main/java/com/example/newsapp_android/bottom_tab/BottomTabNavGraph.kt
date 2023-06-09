@@ -23,7 +23,7 @@ fun BottomTabNavGraph(navController: NavHostController) {
             SearchScreen()
         }
         composable(route = Profile.route) {
-            ProfileScreen()
+            ProfileScreen(OnSignOut = { })
         }
     }
 }

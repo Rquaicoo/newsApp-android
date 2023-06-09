@@ -21,6 +21,7 @@ class Register {
                 .addOnSuccessListener {result ->
 
                     Log.d("Register Success", "auth successful.. ${result.user?.email}")
+
                     OnSuccess()
                 }
 

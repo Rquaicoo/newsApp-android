@@ -35,6 +35,25 @@ import com.example.newsapp_android.ui.theme.NewsAppandroidTheme
 import com.example.newsapp_android.utilities.openLink
 import java.util.*
 
+import java.time.ZonedDateTime
+import java.time.temporal.ChronoUnit
+
+fun calculateTimeDifference(dateTimeString: String): String {
+    val currentDateTime = ZonedDateTime.now()
+    val targetDateTime = ZonedDateTime.parse(dateTimeString)
+
+    val minutesDifference = ChronoUnit.MINUTES.between(targetDateTime, currentDateTime)
+    val hoursDifference = ChronoUnit.HOURS.between(targetDateTime, currentDateTime)
+    val daysDifference = ChronoUnit.DAYS.between(targetDateTime, currentDateTime)
+
+    return when {
+        minutesDifference < 60 -> "${Math.round(minutesDifference.toDouble())} mins ago"
+        hoursDifference < 100 -> "${Math.round(hoursDifference.toDouble())} hours ago"
+        else -> "${Math.round(daysDifference.toDouble())} days ago"
+    }
+}
+
+
 @Composable
 fun NewsComponent(post: PostsModel, context: Context) {
     Box(
@@ -115,17 +134,20 @@ fun NewsComponent(post: PostsModel, context: Context) {
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily(Font(R.font.arial)),
                 color = Color.Black,
+                maxLines = 2,
                 modifier = Modifier.padding(
                     horizontal = 5.dp,
                     vertical = 1.dp
-                )
+                ),
+
+                overflow = TextOverflow.Ellipsis
             )
 
             Row(modifier = Modifier) {
                 Spacer(Modifier.weight(1f))
 
                 Text(
-                    "20 hours ago",
+                    calculateTimeDifference(post.date_scraped),
                     lineHeight = 17.sp,
                     fontStyle = FontStyle.Normal,
                     fontFamily = FontFamily(Font(R.font.arial)),
@@ -184,6 +206,7 @@ fun TrendingItemComponent(post: PostsModel, context: Context, modifier: Modifier
                 fontWeight = FontWeight.Bold,
                 fontFamily = FontFamily(Font(R.font.arial)),
                 color = Color(0x4E, 0x4E, 0x4E),
+                maxLines = 2,
                 modifier = Modifier.padding(horizontal = 15.dp),
                 overflow = TextOverflow.Ellipsis
 
@@ -199,7 +222,7 @@ fun TrendingItemComponent(post: PostsModel, context: Context, modifier: Modifier
                 }
 
                 Text(
-                    "Yesterday",
+                    calculateTimeDifference(post.date_scraped),
                     lineHeight = 15.sp,
                     fontStyle = FontStyle.Normal,
                     fontWeight = FontWeight.Bold,
@@ -225,7 +248,7 @@ fun TrendingItemComponent(post: PostsModel, context: Context, modifier: Modifier
     }
 }
 
-val sections = listOf(R.string.news, R.string.sports, R.string.politics, R.string.tech)
+val sections = listOf(R.string.all, R.string.football, R.string.apps, R.string.africa, R.string.hardware, R.string.ai, R.string.entertainment, R.string.startups, R.string.politics, R.string.tech)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

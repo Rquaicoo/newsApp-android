@@ -21,12 +21,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.newsapp_android.R
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 
 @Composable
 fun ProfileScreen(modifier: Modifier = Modifier, OnSignOut: () -> Unit) {
+
+    val auth: FirebaseAuth = Firebase.auth
+
         Column(
             modifier = modifier
                 .fillMaxSize()
@@ -41,7 +45,7 @@ fun ProfileScreen(modifier: Modifier = Modifier, OnSignOut: () -> Unit) {
                 lineHeight = 20.sp,
                 fontWeight = FontWeight.ExtraBold,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(top=10.dp, bottom = 10.dp)
+                modifier = Modifier.padding(top=30.dp, bottom = 30.dp).fillMaxWidth()
             )
 
 
@@ -100,7 +104,7 @@ fun AccountDetails(modifier: Modifier = Modifier) {
 
             Column(modifier = Modifier) {
                 Text(
-                    "Russell Quaicoo",
+                    Firebase.auth.currentUser?.displayName.toString(),
                     color = Color.Black,
                     fontSize = 16.sp,
                     fontFamily = FontFamily(Font(R.font.arial)),
@@ -109,7 +113,7 @@ fun AccountDetails(modifier: Modifier = Modifier) {
                 )
 
                 Text(
-                    "russellquaicoo1@gmail.com",
+                    Firebase.auth.currentUser?.email.toString(),
                     color = Color.Black,
                     fontSize = 15.sp,
                     fontFamily = FontFamily(Font(R.font.arial)),

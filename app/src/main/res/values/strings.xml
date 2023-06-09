@@ -44,10 +44,18 @@
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
 
-    <string name="news">News</string>
+    <string name="all">All</string>
+    <string name="football">Football</string>
+    <string name="africa">Africa</string>
+    <string name="apps">Apps</string>
     <string name="politics">Politics</string>
     <string name="sports">Sports</string>
     <string name="tech">Technology</string>
+    <string name="ai">AI</string>
+    <string name="startups">Startups</string>
+    <string name="fintech">Fintech</string>
+    <string name="hardware">Hardware</string>
+    <string name="entertainment">Entertainment</string>
 
     <string name="title_activity_main">MainActivity</string>
 
