@@ -40,14 +40,15 @@ import com.example.newsapp_android.components.NewsComponent
 import com.example.newsapp_android.components.SectionComponent
 import com.example.newsapp_android.components.TrendingItemComponent
 import com.example.newsapp_android.dataclasses.PostsModel
+import com.example.newsapp_android.interfaces.PostByCategoryAPI
 import com.example.newsapp_android.interfaces.PostsApi
 import com.example.newsapp_android.ui.theme.NewsAppandroidTheme
 import com.example.newsapp_android.utilities.openLink
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import java.util.*
 
-
-val sections = listOf(R.string.news, R.string.sports, R.string.politics, R.string.tech)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -81,7 +82,6 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     .background(color = Color(0xF1, 0xF5, 0xF7))
                     .padding(horizontal = 20.dp)
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
             ) {
                 /*Greeting Section*/
                     Row(
@@ -115,12 +115,12 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                     }
 
                     Text(
-                        "Russell Q.",
+                        Firebase.auth.currentUser?.displayName.toString().split(" ")[0],
                         color = Color.Black,
                         fontWeight = FontWeight.Bold,
                         fontFamily = FontFamily(Font(R.font.arial)),
                         fontSize = 20.sp, lineHeight = 27.sp,
-                        modifier = Modifier.padding(top = 1.dp, bottom = 1.dp)
+                        modifier = Modifier.padding(horizontal = 3.dp, vertical = 1.dp)
                     )
 
 
@@ -147,26 +147,31 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
                     /*trending posts*/
                     if (!postsLoading && posts != null) {
-                        Text(
-                            "Trending",
-                            lineHeight = 16.sp,
-                            fontStyle = FontStyle.Normal,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = FontFamily(Font(R.font.arial)),
-                            color = Color.Black,
-                            modifier = Modifier.padding(top = 5.dp, bottom = 20.dp)
-                        )
 
-                        LazyRow(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            items(posts!!) { post ->
-                                TrendingItemComponent(post = post, context = context)
-                            }
-                        }
                     }
 
                     /*user feed*/
                     if (!postsLoading && posts != null) {
-                        LazyColumn(modifier = Modifier.height(500.dp)) {
+                        LazyColumn(modifier = Modifier.fillMaxHeight()) {
+                            items(1) {
+                                Text(
+                                    "Trending",
+                                    lineHeight = 16.sp,
+                                    fontStyle = FontStyle.Normal,
+                                    fontWeight = FontWeight.Bold,
+                                    fontFamily = FontFamily(Font(R.font.arial)),
+                                    color = Color.Black,
+                                    modifier = Modifier.padding(top = 5.dp, bottom = 20.dp)
+                                )
+
+                                LazyRow(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                    items(posts!!) { post ->
+                                        TrendingItemComponent(post = post, context = context)
+                                    }
+                                }
+                            }
+
+
                             items(posts!!) { post ->
                                 NewsComponent(post = post, context = context)
                             }
@@ -206,6 +211,31 @@ suspend fun SendRequest(OnSuccess: () -> Unit, OnFailure: () -> Unit): List<Post
     }
 }
 
+
+suspend fun GetFeedByCategory(category:String, OnSuccess: () -> Unit, OnFailure: () -> Unit): List<PostsModel>? {
+    val retrofit = RetrofitClient.getInstance()
+
+    val api = retrofit.create(PostByCategoryAPI::class.java)
+
+    return try {
+        val response = api.getFeedByCategory(url = "v1/news/news/${category}")
+
+        if (response.isSuccessful){
+            OnSuccess()
+            response.body()
+        }
+
+        else {
+            OnFailure()
+            null
+        }
+    }
+
+    catch (ex: Exception) {
+        OnFailure()
+        null
+    }
+}
 
 @Preview(widthDp = 360, heightDp = 740, showBackground = true)
 @Composable
