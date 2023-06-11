@@ -18,7 +18,8 @@
             android:name=".AppContentActivity"
             android:exported="false"
             android:label="@string/title_activity_app_content"
-            android:theme="@style/Theme.NewsAppandroid">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            >
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -27,7 +28,7 @@
             android:name=".NewsAppActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.NewsAppandroid">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

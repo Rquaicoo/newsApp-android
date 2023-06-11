@@ -48,6 +48,18 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.launch
 import java.util.*
+import java.time.LocalTime
+
+
+fun getGreetingBasedOnTime(): String {
+    val currentTime = LocalTime.now()
+
+    return when {
+        currentTime.isBefore(LocalTime.NOON) -> "Good morning!"
+        currentTime.isBefore(LocalTime.of(18, 0)) -> "Good afternoon!"
+        else -> "Good evening!"
+    }
+}
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -75,11 +87,11 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         }
     }
 
-    Surface(modifier = modifier.background(color = Color(0xF1, 0xF5, 0xF7))) {
-        Column(modifier = Modifier.background(color = Color(0xF1, 0xF5, 0xF7))) {
+    Surface(modifier = modifier.background(color = MaterialTheme.colorScheme.surface)) {
+        Column(modifier = Modifier.background(color = MaterialTheme.colorScheme.surface)) {
             Column(
                 modifier = Modifier
-                    .background(color = Color(0xF1, 0xF5, 0xF7))
+                    .background(color = MaterialTheme.colorScheme.surface)
                     .padding(horizontal = 20.dp)
                     .fillMaxSize()
             ) {
@@ -89,7 +101,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            text = "Good morning.",
+                            text = getGreetingBasedOnTime(),
                             color = Color(0xB3, 0xB3, 0xB3),
                             fontWeight = FontWeight.Bold,
                             fontFamily = FontFamily(Font(R.font.arial)),
@@ -107,7 +119,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                                 .width(29.dp)
                                 .border(
                                     width = 1.dp,
-                                    color = Color(0xB3, 0xB3, 0xB3),
+                                    color = MaterialTheme.colorScheme.tertiary,
                                     shape = CircleShape
                                 )
                                 .padding(5.dp)
@@ -116,7 +128,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 
                     Text(
                         Firebase.auth.currentUser?.displayName.toString().split(" ")[0],
-                        color = Color.Black,
+                        color = MaterialTheme.colorScheme.secondary,
                         fontWeight = FontWeight.Bold,
                         fontFamily = FontFamily(Font(R.font.arial)),
                         fontSize = 20.sp, lineHeight = 27.sp,
@@ -160,7 +172,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                                     fontStyle = FontStyle.Normal,
                                     fontWeight = FontWeight.Bold,
                                     fontFamily = FontFamily(Font(R.font.arial)),
-                                    color = Color.Black,
+                                    color = MaterialTheme.colorScheme.secondary,
                                     modifier = Modifier.padding(top = 5.dp, bottom = 20.dp)
                                 )
 
@@ -218,7 +230,7 @@ suspend fun GetFeedByCategory(category:String, OnSuccess: () -> Unit, OnFailure:
     val api = retrofit.create(PostByCategoryAPI::class.java)
 
     return try {
-        val response = api.getFeedByCategory(url = "v1/news/news/${category}")
+        val response = api.getFeedByParam(url = "v1/news/news/?category=${category}")
 
         if (response.isSuccessful){
             OnSuccess()

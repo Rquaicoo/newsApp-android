@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -40,14 +41,14 @@ fun CustomButtomTab(modifier: Modifier = Modifier, navController: NavController)
         modifier = modifier
             .fillMaxWidth()
             .heightIn(min = 73.dp)
-            .background(color = Color.White),
+            .background(color = MaterialTheme.colorScheme.primary),
         horizontalArrangement = Arrangement.SpaceAround,
         verticalAlignment = Alignment.CenterVertically
     ) {
         screens.forEach { screen ->
             Icon(
                 painter = painterResource(id = screen.icon),
-                tint = if (screen.id == selected) Color(0xF6, 0x76, 0x00) else Color.Black,
+                tint = if (screen.id == selected) Color(0xF6, 0x76, 0x00) else MaterialTheme.colorScheme.secondary,
                 contentDescription = screen.name,
                 modifier = Modifier
                     .clickable {

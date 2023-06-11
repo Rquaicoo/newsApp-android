@@ -34,12 +34,12 @@ fun ProfileScreen(modifier: Modifier = Modifier, OnSignOut: () -> Unit) {
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .background(Color(0xF6, 0xF6, 0xF6))
+                .background(MaterialTheme.colorScheme.surface)
 
         ) {
             Text(
                 "Profile",
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.secondary,
                 fontSize = 27.sp,
                 fontFamily = FontFamily(Font(R.font.arial)),
                 lineHeight = 20.sp,
@@ -51,7 +51,7 @@ fun ProfileScreen(modifier: Modifier = Modifier, OnSignOut: () -> Unit) {
 
             Column(modifier = Modifier
                 .height(10.dp)
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.primary)
                 .fillMaxWidth()
             ) {
 
@@ -59,7 +59,7 @@ fun ProfileScreen(modifier: Modifier = Modifier, OnSignOut: () -> Unit) {
 
             Column(modifier = Modifier
                 .heightIn(min = 63.dp)
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.primary)
                 .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AccountDetails()
@@ -69,7 +69,7 @@ fun ProfileScreen(modifier: Modifier = Modifier, OnSignOut: () -> Unit) {
 
             Column(modifier = Modifier
                 .heightIn(min = 63.dp)
-                .background(Color.White)
+                .background(MaterialTheme.colorScheme.primary)
                 .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 OptionsSection()
@@ -78,8 +78,8 @@ fun ProfileScreen(modifier: Modifier = Modifier, OnSignOut: () -> Unit) {
             Spacer(modifier = Modifier.padding(vertical = 15.dp))
 
             Column(modifier = Modifier
-                .heightIn(min = 63.dp)
-                .background(Color.White)
+                .heightIn(min = 70.dp)
+                .background(MaterialTheme.colorScheme.primary)
                 .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 AccountSection()
@@ -94,7 +94,7 @@ fun AccountDetails(modifier: Modifier = Modifier) {
         Row(modifier = Modifier.fillMaxWidth(fraction = 0.9f), verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 painter = painterResource(id = R.drawable.profile_thick),
-                tint = Color.Black,
+                tint = MaterialTheme.colorScheme.secondary,
                 contentDescription = "Profile icon",
                 modifier = Modifier
                     .height(50.dp)
@@ -105,7 +105,7 @@ fun AccountDetails(modifier: Modifier = Modifier) {
             Column(modifier = Modifier) {
                 Text(
                     Firebase.auth.currentUser?.displayName.toString(),
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.secondary,
                     fontSize = 16.sp,
                     fontFamily = FontFamily(Font(R.font.arial)),
                     lineHeight = 20.sp,
@@ -114,7 +114,7 @@ fun AccountDetails(modifier: Modifier = Modifier) {
 
                 Text(
                     Firebase.auth.currentUser?.email.toString(),
-                    color = Color.Black,
+                    color = MaterialTheme.colorScheme.secondary,
                     fontSize = 15.sp,
                     fontFamily = FontFamily(Font(R.font.arial)),
                     lineHeight = 20.sp,
@@ -125,7 +125,7 @@ fun AccountDetails(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.weight(1f))
             Icon(
                 painter = painterResource(id = R.drawable.next),
-                tint = Color.Black,
+                tint = MaterialTheme.colorScheme.secondary,
                 contentDescription = "Open",
                 modifier = Modifier
                     .height(40.dp)
@@ -143,7 +143,7 @@ fun OptionsSection(modifier: Modifier = Modifier) {
     Column(modifier.fillMaxWidth(fraction = 0.9f)) {
         Text(
             "Options",
-            color = Color.Black,
+            color = MaterialTheme.colorScheme.secondary,
             fontSize = 16.sp,
             fontFamily = FontFamily(Font(R.font.arial)),
             lineHeight = 20.sp,
@@ -217,7 +217,7 @@ fun AccountSection(modifier: Modifier = Modifier) {
     Column(modifier.fillMaxWidth(fraction = 0.9f)) {
         Text(
             "Account",
-            color = Color.Black,
+            color = MaterialTheme.colorScheme.secondary,
             fontSize = 16.sp,
             fontFamily = FontFamily(Font(R.font.arial)),
             lineHeight = 20.sp,

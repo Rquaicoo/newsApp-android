@@ -37,6 +37,7 @@ import java.util.*
 
 import java.time.ZonedDateTime
 import java.time.temporal.ChronoUnit
+import kotlin.collections.HashMap
 
 fun calculateTimeDifference(dateTimeString: String): String {
     val currentDateTime = ZonedDateTime.now()
@@ -249,6 +250,19 @@ fun TrendingItemComponent(post: PostsModel, context: Context, modifier: Modifier
 }
 
 val sections = listOf(R.string.all, R.string.football, R.string.apps, R.string.africa, R.string.hardware, R.string.ai, R.string.entertainment, R.string.startups, R.string.politics, R.string.tech)
+
+val map: HashMap<Any?, String> = hashMapOf(
+    R.string.all to "all",
+    R.string.football to "football",
+    R.string.apps to "apps",
+    R.string.africa to "africa",
+    R.string.hardware to "hardware",
+    R.string.ai to "artificial-intelligence",
+    R.string.entertainment to "media-entertainment",
+    R.string.startups to "startups",
+    R.string.politics to "politics",
+    R.string.tech to "tech"
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
