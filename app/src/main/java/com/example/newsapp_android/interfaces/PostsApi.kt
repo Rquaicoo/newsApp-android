@@ -19,6 +19,6 @@ interface PostByCategoryAPI {
         "Accept: application/json"
     )
     @GET
-    suspend fun getFeedByCategory(@Url url: String) : Response<List<PostsModel>>
+    suspend fun getFeedByParam(@Url url: String) : Response<List<PostsModel>>
 }
 

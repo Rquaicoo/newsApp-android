@@ -27,7 +27,7 @@ class NewsAppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            NewsAppandroidTheme {
+            InfluxnewsTheme {
                 NewsApp(modifier = Modifier)
             }
         }
