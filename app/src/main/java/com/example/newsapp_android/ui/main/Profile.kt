@@ -30,6 +30,7 @@ import kotlinx.coroutines.launch
 fun ProfileScreen(modifier: Modifier = Modifier, OnSignOut: () -> Unit) {
 
     val auth: FirebaseAuth = Firebase.auth
+    Log.d("UID", auth.currentUser?.uid.toString())
 
         Column(
             modifier = modifier
@@ -78,7 +79,7 @@ fun ProfileScreen(modifier: Modifier = Modifier, OnSignOut: () -> Unit) {
             Spacer(modifier = Modifier.padding(vertical = 15.dp))
 
             Column(modifier = Modifier
-                .heightIn(min = 70.dp)
+                .heightIn(min = 100.dp)
                 .background(MaterialTheme.colorScheme.primary)
                 .fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -234,7 +235,7 @@ fun AccountSection(modifier: Modifier = Modifier) {
 
         Row(modifier = Modifier) {
             Text(
-                "Edit profile",
+                "Update Preferences",
                 color = Color(0x95, 0x95, 0x95),
                 fontSize = 16.sp,
                 fontFamily = FontFamily(Font(R.font.arial)),
@@ -256,7 +257,30 @@ fun AccountSection(modifier: Modifier = Modifier) {
 
         Row(modifier = Modifier) {
             Text(
-                "Change password",
+                "Privacy Policy",
+                color = Color(0x95, 0x95, 0x95),
+                fontSize = 16.sp,
+                fontFamily = FontFamily(Font(R.font.arial)),
+                lineHeight = 20.sp,
+                fontWeight = FontWeight.ExtraBold,
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            Icon(
+                painter = painterResource(id = R.drawable.next),
+                contentDescription = "Open",
+                tint = Color(0x95, 0x95, 0x95),
+                modifier = Modifier
+                    .height(40.dp)
+                    .padding(start = 0.dp, top = 0.dp, end = 0.dp, bottom = 0.dp)
+
+            )
+        }
+
+        Row(modifier = Modifier) {
+            Text(
+                "Terms of Service",
                 color = Color(0x95, 0x95, 0x95),
                 fontSize = 16.sp,
                 fontFamily = FontFamily(Font(R.font.arial)),
