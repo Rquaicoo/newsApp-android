@@ -46,19 +46,21 @@ fun CustomButtomTab(modifier: Modifier = Modifier, navController: NavController)
         verticalAlignment = Alignment.CenterVertically
     ) {
         screens.forEach { screen ->
-            Icon(
-                painter = painterResource(id = screen.icon),
-                tint = if (screen.id == selected) Color(0xF6, 0x76, 0x00) else MaterialTheme.colorScheme.secondary,
-                contentDescription = screen.name,
-                modifier = Modifier
-                    .clickable {
+            Box(modifier = Modifier.width(40.dp)) {
+                Icon(
+                    painter = painterResource(id = screen.icon),
+                    tint = if (screen.id == selected) Color(0xF6, 0x76, 0x00) else MaterialTheme.colorScheme.secondary,
+                    contentDescription = screen.name,
+                    modifier = Modifier
+                        .clickable {
                             selected = screen.id
                             navController.navigate(screen.route) {
                                 popUpTo(navController.graph.findStartDestination().id)
                                 launchSingleTop = true
                             }
-                    }
-            )
+                        }
+                )
+            }
         }
     }
 }
