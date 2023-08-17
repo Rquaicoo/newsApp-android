@@ -2,11 +2,11 @@ package com.example.newsapp_android.components
 
 import android.content.Context
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.Font
@@ -14,10 +14,11 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -54,6 +55,86 @@ fun calculateTimeDifference(dateTimeString: String): String {
     }
 }
 
+@Composable
+fun LikeAndShareComponent(modifier: Modifier, post: PostsModel, onSharePressed: () -> Unit) {
+
+    var postLiked by remember { mutableStateOf(false) }
+    var interactionSource = MutableInteractionSource()
+
+    Row(modifier = modifier.padding(top = 3.dp, bottom = 20.dp)) {
+
+        Spacer(modifier = Modifier.weight(0.8f))
+
+        IconToggleButton(modifier = Modifier.padding(horizontal = 10.dp)
+            .height(25.dp)
+            .width(30.dp),
+            checked = postLiked, onCheckedChange = {
+            postLiked = !postLiked
+        }) {
+            Icon(
+                tint = if (postLiked) Color(0xA8, 0x37, 0x39) else MaterialTheme.colorScheme.secondary,
+                imageVector = if (postLiked) {Icons.Filled.Favorite} else { Icons.Default.FavoriteBorder},
+                contentDescription = "Like or Bookmark",
+                modifier = Modifier
+
+            )
+        }
+
+        Icon(
+            painter = painterResource(id = R.drawable.share),
+            tint = MaterialTheme.colorScheme.secondary,
+            contentDescription = "Share",
+            modifier = Modifier
+                .padding(horizontal = 10.dp)
+                .height(25.dp)
+                .width(23.dp)
+                .clickable {
+                    onSharePressed()
+                }
+        )
+    }
+}
+@Composable
+fun MovieTile(movie: PostsModel, context: Context) {
+    Column(
+        modifier = Modifier
+            .height(90.dp)
+            .width(55.dp)
+            .fillMaxWidth()
+            .padding(top = 1.dp, bottom = 1.dp)
+            .clickable(
+                onClick = {
+                    //openLink(context, post.url)
+                }
+            )
+
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.elon_twitter),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .height(70.dp)
+                .clip(shape = RoundedCornerShape(10.dp)),
+        )
+        Text(
+            text = "Transformers: Rise of the beasts",
+            lineHeight = 4.sp,
+            fontSize = 4.sp,
+            fontStyle = FontStyle.Normal,
+            fontWeight = FontWeight.Bold,
+            fontFamily = FontFamily(Font(R.font.arial)),
+            color = MaterialTheme.colorScheme.secondary,
+            maxLines = 2,
+            modifier = Modifier.padding(
+                horizontal = 5.dp,
+                vertical = 1.dp
+            ),
+
+            overflow = TextOverflow.Ellipsis
+        )
+    }
+}
 
 @Composable
 fun NewsComponent(post: PostsModel, context: Context) {
